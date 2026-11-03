@@ -1,0 +1,50 @@
+name: self-test
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 6 * * 1'
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node test/run-tests.cjs
+  healthy-domains-pass:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        uses: ./
+        with:
+          domains: |
+            github.com
+            www.wikipedia.org
+          fail-within-days: '3'
+      - run: test "${{ steps.check.outputs.result }}" = "pass"
+  expired-certificate-fails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        uses: ./
+        continue-on-error: true
+        with:
+          domains: expired.badssl.com
+          check: ssl
+      - name: Expect a failure on an expired certificate
+        run: test "${{ steps.check.outputs.result }}" = "fail"
+  report-only-from-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        uses: ./
+        with:
+          domains-file: examples/domains.txt
+          fail-within-days: '0'
+          fail-on-problems: 'false'
+      - run: echo "soonest ${{ steps.check.outputs.soonest-days-left }} days"

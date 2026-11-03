@@ -1,0 +1,57 @@
+name: 'Domain Expiry Check: Domain & SSL Certificate Alerts'
+description: 'Fail the build before a domain registration or SSL certificate expires. Many domains, RDAP registry dates, no server.'
+author: 'Nero Labs'
+branding:
+  icon: 'clock'
+  color: 'orange'
+inputs:
+  domains:
+    description: 'Domains or host names to check, one per line or comma separated (example.com, shop.example.com or a full URL). # starts a comment. Use this, domains-file, or both.'
+    required: false
+    default: ''
+  domains-file:
+    description: 'Path to a text file in your repo with one domain or host per line (# comments allowed), for example .github/domains.txt.'
+    required: false
+    default: ''
+  check:
+    description: '"both" (default) = domain registration and TLS certificate, "domain" = registration only, "ssl" = certificate only.'
+    required: false
+    default: 'both'
+  fail-within-days:
+    description: 'Fail when a domain registration expires within this many days (0 = only when already expired). Default 30.'
+    required: false
+    default: '30'
+  ssl-fail-within-days:
+    description: 'Fail when a TLS certificate expires within this many days. Default 14, because automated certificates (Let''s Encrypt) renew at 30 days left. Warns 7 days earlier.'
+    required: false
+    default: '14'
+  warn-within-days:
+    description: 'Add a warning (not a failure) when a domain registration expires within this many days. Default 60.'
+    required: false
+    default: '60'
+  fail-on-problems:
+    description: '"true" (default) also fails on an untrusted certificate (self-signed, wrong host, missing intermediate) and on a domain that is on hold, in redemption, pending delete or not registered. "false" = warn only.'
+    required: false
+    default: 'true'
+  ssl-port:
+    description: 'Port to read the TLS certificate from. Default 443.'
+    required: false
+    default: '443'
+  timeout-seconds:
+    description: 'Per lookup timeout in seconds (5 to 120). Default 20.'
+    required: false
+    default: '20'
+outputs:
+  result:
+    description: '"pass", "fail" or "error" (nothing could be checked).'
+  failing-count:
+    description: 'How many hosts failed the rules.'
+  failing-hosts:
+    description: 'Comma separated hosts that failed.'
+  soonest-days-left:
+    description: 'Days until the soonest domain or certificate expiry across all hosts (negative = already expired).'
+  report:
+    description: 'Full JSON report: per host the domain expiry date and days left, registrar, registry statuses, certificate expiry, days left, issuer, trust, and the reasons it failed or warned.'
+runs:
+  using: 'node24'
+  main: 'dist/index.js'

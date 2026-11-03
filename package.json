@@ -1,0 +1,14 @@
+{
+  "name": "domain-expiry-check",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GitHub Action and CLI: fail the build before a domain registration or TLS (SSL) certificate expires, for many domains, using the registries' own RDAP records.",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist/index.js --legal-comments=none",
+    "test": "node test/run-tests.cjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

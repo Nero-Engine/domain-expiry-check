@@ -1,0 +1,20 @@
+# .github/workflows/domain-expiry.yml
+# Runs every Monday. GitHub emails you when a scheduled run fails,
+# so this is a free expiry alert for your domains and certificates.
+name: Domain and SSL expiry
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+jobs:
+  expiry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Nero-Engine/domain-expiry-check@v1
+        with:
+          domains: |
+            example.com
+            www.example.com
+            shop.example.com
+          fail-within-days: 30

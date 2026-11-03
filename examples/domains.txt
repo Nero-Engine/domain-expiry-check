@@ -1,0 +1,5 @@
+# One domain or host per line. Hosts get their own certificate checked;
+# the registration is checked once per domain.
+github.com
+docs.github.com
+www.wikipedia.org
